@@ -11,7 +11,7 @@
 #define KMATH
 
 #ifdef KMATH
-	#include "fdlibm.h"
+	#include "fdlibm/fdlibm.h"
 	#include "MathConstants.h"
 	
 	#define DEG2RAD(x) ((x * M_PI) / 180.0)

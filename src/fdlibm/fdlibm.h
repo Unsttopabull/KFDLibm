@@ -49,7 +49,7 @@ extern int signgam;
 enum fdversion {fdlibm_ieee = -1, fdlibm_svid, fdlibm_xopen, fdlibm_posix};
 
 #define _LIB_VERSION_TYPE enum fdversion
-#define _LIB_VERSION _fdlib_version  
+#define _LIB_VERSION _fdlib_version
 
 /* if global variable _LIB_VERSION is not desirable, one may 
  * change the following to be a constant by: 
@@ -57,7 +57,7 @@ enum fdversion {fdlibm_ieee = -1, fdlibm_svid, fdlibm_xopen, fdlibm_posix};
  * In that case, after one initializes the value _LIB_VERSION (see
  * s_lib_version.c) during compile time, it cannot be modified
  * in the middle of a program
- */ 
+ */
 extern  _LIB_VERSION_TYPE  _LIB_VERSION;
 
 #define _IEEE_  fdlibm_ieee
@@ -80,7 +80,7 @@ struct exception {
  * (one may replace the following line by "#include <values.h>")
  */
 
-#define X_TLOSS		1.41484755040568800000e+16 
+#define X_TLOSS		1.41484755040568800000e+16
 
 #define	DOMAIN		1
 #define	SING		2
@@ -94,7 +94,7 @@ struct exception {
  */
 extern double acos __P((double));
 extern double asin __P((double));
-extern double atan __P((double));
+extern void atan __P((double,double*));
 extern double atan2 __P((double, double));
 extern double cos __P((double));
 extern double sin __P((double));
@@ -112,11 +112,11 @@ extern double log10 __P((double));
 extern double modf __P((double, double *));
 
 extern double pow __P((double, double));
-extern double sqrt __P((double));
+extern void sqrt __P((double,double*));
 
 extern double ceil __P((double));
 extern double fabs __P((double));
-extern double floor __P((double));
+extern void floor __P((double,double*));
 extern double fmod __P((double, double));
 
 extern double erf __P((double));
@@ -156,16 +156,16 @@ extern double significand __P((double));
 /*
  * Functions callable from C, intended to support IEEE arithmetic.
  */
-extern double copysign __P((double, double));
+extern void copysign __P((double, double, double*));
 extern int ilogb __P((double));
-extern double rint __P((double));
-extern double scalbn __P((double, int));
+extern void rint __P((double, double *));
+extern void scalbn __P((double, int, double*));
 
 /*
  * BSD math library entry points
  */
 extern double expm1 __P((double));
-extern double log1p __P((double));
+extern void log1p __P((double,double*));
 
 /*
  * Reentrant version of gamma & lgamma; passes signgam back by reference
@@ -177,13 +177,13 @@ extern double lgamma_r __P((double, int *));
 #endif	/* _REENTRANT */
 
 /* ieee style elementary functions */
-extern double __ieee754_sqrt __P((double));			
-extern double __ieee754_acos __P((double));			
-extern double __ieee754_acosh __P((double));			
-extern double __ieee754_log __P((double));			
-extern double __ieee754_atanh __P((double));			
-extern double __ieee754_asin __P((double));			
-extern double __ieee754_atan2 __P((double,double));			
+extern double __ieee754_sqrt __P((double));
+extern void __ieee754_acos __P((double, double*));
+extern void __ieee754_acosh __P((double,double*));
+extern void __ieee754_log __P((double,double*));
+extern void __ieee754_atanh __P((double,double*));
+extern void __ieee754_asin __P((double,double*));
+extern void __ieee754_atan2 __P((double,double,double*));
 extern double __ieee754_exp __P((double));
 extern double __ieee754_cosh __P((double));
 extern double __ieee754_fmod __P((double,double));
@@ -210,8 +210,8 @@ extern double __ieee754_scalb __P((double,double));
 #endif
 
 /* fdlibm kernel function */
-extern double __kernel_standard __P((double,double,int));	
-extern double __kernel_sin __P((double,double,int));
-extern double __kernel_cos __P((double,double));
-extern double __kernel_tan __P((double,double,int));
+extern void __kernel_standard __P((double,double,int,double*));
+extern void __kernel_sin __P((double,double,int,double*));
+extern void __kernel_cos __P((double,double,double*));
+extern void __kernel_tan __P((double,double,int,double*));
 extern int    __kernel_rem_pio2 __P((double*,double*,int,int,int,const int*));

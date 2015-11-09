@@ -20,12 +20,12 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double copysign(double x, double y)
+	void copysign(double x, double y, double* result)
 #else
-	double copysign(x,y)
-	double x,y;
+	void copysign(x,y,result)
+	double x,y; double* result;
 #endif
 {
 	__HI(x) = (__HI(x)&0x7fffffff)|(__HI(y)&0x80000000);
-        return x;
+	*result = x;
 }

@@ -1,4 +1,3 @@
-
 /* @(#)e_acosh.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -29,37 +28,56 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-static const double 
+static const double
 #else
-static double 
+static double
 #endif
-one	= 1.0,
-ln2	= 6.93147180559945286227e-01;  /* 0x3FE62E42, 0xFEFA39EF */
+        one = 1.0,
+        ln2 = 6.93147180559945286227e-01;  /* 0x3FE62E42, 0xFEFA39EF */
 
 #ifdef __STDC__
-	double __ieee754_acosh(double x)
+void __ieee754_acosh(double x, double* result)
 #else
-	double __ieee754_acosh(x)
-	double x;
+void __ieee754_acosh(x,result)
+        double x;double* result;
 #endif
-{	
-	double t;
-	int hx;
-	hx = __HI(x);
-	if(hx<0x3ff00000) {		/* x < 1 */
-	    return (x-x)/(x-x);
-	} else if(hx >=0x41b00000) {	/* x > 2**28 */
-	    if(hx >=0x7ff00000) {	/* x is inf of NaN */
-	        return x+x;
-	    } else 
-		return __ieee754_log(x)+ln2;	/* acosh(huge)=log(2x) */
-	} else if(((hx-0x3ff00000)|__LO(x))==0) {
-	    return 0.0;			/* acosh(1) = 0 */
-	} else if (hx > 0x40000000) {	/* 2**28 > x > 2 */
-	    t=x*x;
-	    return __ieee754_log(2.0*x-one/(x+sqrt(t-one)));
-	} else {			/* 1<x<2 */
-	    t = x-one;
-	    return log1p(t+sqrt(2.0*t+t*t));
-	}
+{
+    double t;
+    int hx;
+    hx = __HI(x);
+    if (hx < 0x3ff00000) {        /* x < 1 */
+        *result = (x - x) / (x - x);
+        return;
+    }
+    else if (hx >= 0x41b00000) {    /* x > 2**28 */
+        if (hx >= 0x7ff00000) {    /* x is inf of NaN */
+            *result = x + x;
+            return;
+        }
+        else {
+            __ieee754_log(x, result);
+            *result += ln2;
+            return;
+        }    /* acosh(huge)=log(2x) */
+    }
+    else if (((hx - 0x3ff00000) | __LO(x)) == 0) {
+        *result = 0.0;            /* acosh(1) = 0 */
+        return;
+    }
+    else if (hx > 0x40000000) {    /* 2**28 > x > 2 */
+        t = x * x;
+        double sq;
+        sqrt(t - one, &sq);
+
+        __ieee754_log(2.0 * x - one / (x + sq), result);
+        return;
+    }
+    else {            /* 1<x<2 */
+        t = x - one;
+
+        double sq;
+        sqrt(2.0 * t + t * t, &sq);
+        log1p(t + sq, result);
+        return;
+    }
 }

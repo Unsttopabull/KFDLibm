@@ -1,4 +1,3 @@
-
 /* @(#)e_atanh.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -41,28 +40,51 @@ static double one = 1.0, huge = 1e300;
 static double zero = 0.0;
 
 #ifdef __STDC__
-	double __ieee754_atanh(double x)
+void __ieee754_atanh(double x, double* result)
 #else
-	double __ieee754_atanh(x)
-	double x;
+void __ieee754_atanh(x,result)
+        double x; double* result;
 #endif
 {
-	double t;
-	int hx,ix;
-	unsigned lx;
-	hx = __HI(x);		/* high word */
-	lx = __LO(x);		/* low word */
-	ix = hx&0x7fffffff;
-	if ((ix|((lx|(-lx))>>31))>0x3ff00000) /* |x|>1 */
-	    return (x-x)/(x-x);
-	if(ix==0x3ff00000) 
-	    return x/zero;
-	if(ix<0x3e300000&&(huge+x)>zero) return x;	/* x<2**-28 */
-	__HI(x) = ix;		/* x <- |x| */
-	if(ix<0x3fe00000) {		/* x < 0.5 */
-	    t = x+x;
-	    t = 0.5*log1p(t+t*x/(one-x));
-	} else 
-	    t = 0.5*log1p((x+x)/(one-x));
-	if(hx>=0) return t; else return -t;
+    double t;
+    int hx, ix;
+    unsigned lx;
+    hx = __HI(x);        /* high word */
+    lx = __LO(x);        /* low word */
+    ix = hx & 0x7fffffff;
+    if ((ix | ((lx | (-lx)) >> 31)) > 0x3ff00000) { /* |x|>1 */
+        *result = (x - x) / (x - x);
+        return;
+    }
+    if (ix == 0x3ff00000) {
+        *result = x / zero;
+        return;
+    }
+    if (ix < 0x3e300000 && (huge + x) > zero) {
+        *result = x;
+        return;
+    }    /* x<2**-28 */
+    __HI(x) = ix;        /* x <- |x| */
+    if (ix < 0x3fe00000) {        /* x < 0.5 */
+        t = x + x;
+
+        double logp;
+        log1p(t + t * x / (one - x), &logp);
+
+        t = 0.5 * logp;
+    }
+    else {
+        double logp;
+        log1p((x + x) / (one - x), &logp);
+
+        t = 0.5 * logp;
+    }
+    if (hx >= 0) {
+        *result = t;
+        return;
+    }
+    else {
+        *result = -t;
+        return;
+    }
 }
