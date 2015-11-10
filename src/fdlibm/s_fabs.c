@@ -18,12 +18,12 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double fabs(double x)
+	void fabs(double x, double* result)
 #else
-	double fabs(x)
-	double x;
+	void fabs(x,result)
+	double x;double* result;
 #endif
 {
 	__HI(x) &= 0x7fffffff;
-        return x;
+        *result = x;
 }

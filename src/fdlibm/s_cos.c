@@ -1,4 +1,3 @@
-
 /* @(#)s_cos.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -45,34 +44,49 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double cos(double x)
+void cos(double x, double* result)
 #else
-	double cos(x)
-	double x;
+void cos(x, result)
+        double x; double* result;
 #endif
 {
-	double y[2],z=0.0;
-	int n, ix;
+    double y[2], z = 0.0;
+    int n, ix;
 
     /* High word of x. */
-	ix = __HI(x);
+    ix = __HI(x);
 
     /* |x| ~< pi/4 */
-	ix &= 0x7fffffff;
-	if(ix <= 0x3fe921fb) return __kernel_cos(x,z);
+    ix &= 0x7fffffff;
+    if (ix <= 0x3fe921fb) {
+        *result = __kernel_cos(x, z);
+        return;
 
-    /* cos(Inf or NaN) is NaN */
-	else if (ix>=0x7ff00000) return x-x;
+        /* cos(Inf or NaN) is NaN */
+    }
+    else if (ix >= 0x7ff00000) {
+        *result = x - x;
+        return;
 
-    /* argument reduction needed */
-	else {
-	    n = __ieee754_rem_pio2(x,y);
-	    switch(n&3) {
-		case 0: return  __kernel_cos(y[0],y[1]);
-		case 1: return -__kernel_sin(y[0],y[1],1);
-		case 2: return -__kernel_cos(y[0],y[1]);
-		default:
-		        return  __kernel_sin(y[0],y[1],1);
-	    }
-	}
+        /* argument reduction needed */
+    }
+    else {
+        n = __ieee754_rem_pio2(x, y);
+        switch (n & 3) {
+            case 0:
+                __kernel_cos(y[0], y[1], result);
+                return;
+            case 1:
+                __kernel_sin(y[0], y[1], 1, result);
+                *result = -*result;
+                return;
+            case 2:
+                __kernel_cos(y[0], y[1], result);
+                *result = -*result;
+                return;
+            default:
+                __kernel_sin(y[0], y[1], 1, &result);
+                return;
+        }
+    }
 }

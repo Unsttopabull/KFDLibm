@@ -102,7 +102,10 @@ void __ieee754_asin(x,result)
         return;
     }
     /* 1> |x|>= 0.5 */
-    w = one - fabs(x);
+    double fbs;
+    fabs(x, &fbs);
+
+    w = one - fbs;
     t = w * 0.5;
     p = t * (pS0 + t * (pS1 + t * (pS2 + t * (pS3 + t * (pS4 + t * pS5)))));
     q = one + t * (qS1 + t * (qS2 + t * (qS3 + t * qS4)));

@@ -96,8 +96,8 @@ extern double acos __P((double));
 extern double asin __P((double));
 extern void atan __P((double,double*));
 extern double atan2 __P((double, double));
-extern double cos __P((double));
-extern double sin __P((double));
+extern void cos __P((double, double*));
+extern void sin __P((double, double*));
 extern double tan __P((double));
 
 extern double cosh __P((double));
@@ -115,7 +115,7 @@ extern double pow __P((double, double));
 extern void sqrt __P((double,double*));
 
 extern double ceil __P((double));
-extern double fabs __P((double));
+extern void fabs __P((double,double*));
 extern void floor __P((double,double*));
 extern double fmod __P((double, double));
 
@@ -164,7 +164,7 @@ extern void scalbn __P((double, int, double*));
 /*
  * BSD math library entry points
  */
-extern double expm1 __P((double));
+extern void expm1 __P((double, double*));
 extern void log1p __P((double,double*));
 
 /*
@@ -184,21 +184,21 @@ extern void __ieee754_log __P((double,double*));
 extern void __ieee754_atanh __P((double,double*));
 extern void __ieee754_asin __P((double,double*));
 extern void __ieee754_atan2 __P((double,double,double*));
-extern double __ieee754_exp __P((double));
-extern double __ieee754_cosh __P((double));
-extern double __ieee754_fmod __P((double,double));
+extern void __ieee754_exp __P((double, double*));
+extern void __ieee754_cosh __P((double,double*));
+extern void __ieee754_fmod __P((double,double, double*));
 extern double __ieee754_pow __P((double,double));
-extern double __ieee754_lgamma_r __P((double,int *));
-extern double __ieee754_gamma_r __P((double,int *));
+extern void __ieee754_lgamma_r __P((double,int *, double*));
+extern void __ieee754_gamma_r __P((double,int *, double*));
 extern double __ieee754_lgamma __P((double));
-extern double __ieee754_gamma __P((double));
+extern void __ieee754_gamma __P((double, double*));
 extern double __ieee754_log10 __P((double));
 extern double __ieee754_sinh __P((double));
-extern double __ieee754_hypot __P((double,double));
-extern double __ieee754_j0 __P((double));
-extern double __ieee754_j1 __P((double));
-extern double __ieee754_y0 __P((double));
-extern double __ieee754_y1 __P((double));
+extern void __ieee754_hypot __P((double,double,double*));
+extern void __ieee754_j0 __P((double,double*));
+extern void __ieee754_j1 __P((double, double*));
+extern void __ieee754_y0 __P((double,double*));
+extern void __ieee754_y1 __P((double, double*));
 extern double __ieee754_jn __P((int,double));
 extern double __ieee754_yn __P((int,double));
 extern double __ieee754_remainder __P((double,double));

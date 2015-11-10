@@ -72,7 +72,7 @@ static const double xxx[] = {
 /* INDENT ON */
 
 void
-__kernel_tan(double x, double y, int iy, double* result) {
+__kernel_tan(double x, double y, int iy, double *result) {
     double z, r, v, w, s;
     int ix, hx;
 
@@ -81,7 +81,10 @@ __kernel_tan(double x, double y, int iy, double* result) {
     if (ix < 0x3e300000) {            /* x < 2**-28 */
         if ((int) x == 0) {        /* generate inexact */
             if (((ix | __LO(x)) | (iy + 1)) == 0) {
-                *result = one / fabs(x);
+                double fbs;
+                fabs(x, &fbs);
+
+                *result = one / fbs;
                 return;
             }
             else {
@@ -132,7 +135,7 @@ __kernel_tan(double x, double y, int iy, double* result) {
     if (ix >= 0x3FE59428) {
         v = (double) iy;
         *result = (double) (1 - ((hx >> 30) & 2)) *
-               (v - 2.0 * (x - (w * w / (w + v) - r)));
+                  (v - 2.0 * (x - (w * w / (w + v) - r)));
         return;
     }
     if (iy == 1) {

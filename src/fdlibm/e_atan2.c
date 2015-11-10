@@ -151,7 +151,10 @@ void __ieee754_atan2(y, x, result)
         z = 0.0;    /* |y|/x < -2**60 */
     }
     else {
-        atan(fabs(y / x), &z);
+        double fbs;
+        fabs(y / x, &fbs);
+
+        atan(fbs, &z);
     }        /* safe to do y/x */
     switch (m) {
         case 0:
