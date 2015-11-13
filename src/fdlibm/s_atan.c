@@ -85,7 +85,7 @@ static double
 void atan(double x, double* result)
 #else
 void atan(x, result)
-        double x; double *result;
+        double x; double* result;
 #endif
 {
     double w, s1, s2, z;
@@ -118,7 +118,7 @@ void atan(x, result)
         id = -1;
     }
     else {
-        x = fabs(x);
+        fabs(x, &x);
         if (ix < 0x3ff30000) {        /* |x| < 1.1875 */
             if (ix < 0x3fe60000) {    /* 7/16 <=|x|<11/16 */
                 id = 0;

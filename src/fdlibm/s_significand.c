@@ -1,4 +1,3 @@
-
 /* @(#)s_significand.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -20,11 +19,12 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double significand(double x)
+void significand(double x, double* result)
 #else
-	double significand(x)
-	double x;
+void significand(x, result)
+        double x; double* result;
 #endif
 {
-	return __ieee754_scalb(x,(double) -ilogb(x));
+    __ieee754_scalb(x, (double) -ilogb(x), result);
+    return;
 }

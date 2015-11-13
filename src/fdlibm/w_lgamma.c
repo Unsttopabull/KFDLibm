@@ -1,4 +1,3 @@
-
 /* @(#)w_lgamma.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -23,24 +22,38 @@
 extern int signgam;
 
 #ifdef __STDC__
-	double lgamma(double x)
+void lgamma(double x, double* result)
 #else
-	double lgamma(x)
-	double x;
+void lgamma(x, result)
+        double x; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_lgamma_r(x,&signgam);
+    __ieee754_lgamma_r(x,&signgam,result);
+    return;
 #else
-        double y;
-        y = __ieee754_lgamma_r(x,&signgam);
-        if(_LIB_VERSION == _IEEE_) return y;
-        if(!finite(y)&&finite(x)) {
-            if(floor(x)==x&&x<=0.0)
-                return __kernel_standard(x,x,15); /* lgamma pole */
-            else
-                return __kernel_standard(x,x,14); /* lgamma overflow */
-        } else
-            return y;
+    double y;
+    __ieee754_lgamma_r(x, &signgam, &y);
+    if (_LIB_VERSION == _IEEE_) {
+        *result = y;
+        return;
+    }
+    if (!finite(y) && finite(x)) {
+        double floorX;
+        floor(x, &floorX);
+
+        if (floorX == x && x <= 0.0) {
+            __kernel_standard(x, x, 15, result); /* lgamma pole */
+            return;
+        }
+        else {
+            __kernel_standard(x, x, 14, result);
+            return;
+        } /* lgamma overflow */
+    }
+    else {
+        *result = y;
+        return;
+    }
 #endif
 }             

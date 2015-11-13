@@ -1,4 +1,3 @@
-
 /* @(#)w_acosh.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -19,21 +18,28 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double acosh(double x)		/* wrapper acosh */
+void acosh(double x, double* result)		/* wrapper acosh */
 #else
-	double acosh(x)			/* wrapper acosh */
-	double x;
+void acosh(x,result)            /* wrapper acosh */
+        double x;double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_acosh(x);
+    __ieee754_acosh(x, result);
+    return;
 #else
-	double z;
-	z = __ieee754_acosh(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(x<1.0) {
-	        return __kernel_standard(x,x,29); /* acosh(x<1) */
-	} else
-	    return z;
+    double z;
+    z = __ieee754_acosh(x);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+    }
+    if (x < 1.0) {
+        __kernel_standard(x, x, 29, result); /* acosh(x<1) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

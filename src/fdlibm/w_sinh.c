@@ -1,4 +1,3 @@
-
 /* @(#)w_sinh.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -18,21 +17,29 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double sinh(double x)		/* wrapper sinh */
+void sinh(double x, double* result)		/* wrapper sinh */
 #else
-	double sinh(x)			/* wrapper sinh */
-	double x;
+void sinh(x, result)            /* wrapper sinh */
+        double x; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_sinh(x);
+    __ieee754_sinh(x, result);
+    return;
 #else
-	double z; 
-	z = __ieee754_sinh(x);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if(!finite(z)&&finite(x)) {
-	    return __kernel_standard(x,x,25); /* sinh overflow */
-	} else
-	    return z;
+    double z;
+    __ieee754_sinh(x, &z);
+    if (_LIB_VERSION == _IEEE_) {
+        *result = z;
+        return;
+    }
+    if (!finite(z) && finite(x)) {
+        __kernel_standard(x, x, 25, result); /* sinh overflow */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

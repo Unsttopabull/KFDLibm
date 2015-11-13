@@ -1,4 +1,3 @@
-
 /* @(#)w_acos.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -19,21 +18,29 @@
 
 
 #ifdef __STDC__
-	double acos(double x)		/* wrapper acos */
+void acos(double x, double* result)		/* wrapper acos */
 #else
-	double acos(x)			/* wrapper acos */
-	double x;
+void acos(x, result)            /* wrapper acos */
+        double x;double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_acos(x);
+    __ieee754_acos(x, result);
+    return;
 #else
-	double z;
-	z = __ieee754_acos(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(fabs(x)>1.0) {
-	        return __kernel_standard(x,x,1); /* acos(|x|>1) */
-	} else
-	    return z;
+    double z;
+    __ieee754_acos(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    if (fabs(x) > 1.0) {
+        __kernel_standard(x, x, 1, result); /* acos(|x|>1) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

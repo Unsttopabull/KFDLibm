@@ -1,4 +1,3 @@
-
 /* @(#)w_asin.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -21,21 +20,33 @@
 
 
 #ifdef __STDC__
-	double asin(double x)		/* wrapper asin */
+void asin(double x, double* result)		/* wrapper asin */
 #else
-	double asin(x)			/* wrapper asin */
-	double x;
+void asin(x, result)            /* wrapper asin */
+        double x; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_asin(x);
+    __ieee754_asin(x, result);
+    return;
 #else
-	double z;
-	z = __ieee754_asin(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(fabs(x)>1.0) {
-	        return __kernel_standard(x,x,2); /* asin(|x|>1) */
-	} else
-	    return z;
+    double z;
+    __ieee754_asin(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+
+    double fabsV;
+    fabs(x, &fabsV);
+
+    if (fabsV > 1.0) {
+        __kernel_standard(x, x, 2, result); /* asin(|x|>1) */
+        return;
+    }
+    else {
+        *result =z;
+        return;
+    }
 #endif
 }

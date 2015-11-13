@@ -1,4 +1,3 @@
-
 /* @(#)w_jn.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -40,49 +39,72 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double jn(int n, double x)	/* wrapper jn */
+void jn(int n, double x, double* result)	/* wrapper jn */
 #else
-	double jn(n,x)			/* wrapper jn */
-	double x; int n;
+void jn(n, x, result)            /* wrapper jn */
+        double x; int n; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_jn(n,x);
+    __ieee754_jn(n,x,result);
+    return;
 #else
-	double z;
-	z = __ieee754_jn(n,x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-	if(fabs(x)>X_TLOSS) {
-	    return __kernel_standard((double)n,x,38); /* jn(|x|>X_TLOSS,n) */
-	} else
-	    return z;
+    double z;
+    __ieee754_jn(n, x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    double fabsV;
+    fabs(x, &fabsV);
+
+    if (fabsV > X_TLOSS) {
+        __kernel_standard((double) n, x, 38, result); /* jn(|x|>X_TLOSS,n) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }
 
 #ifdef __STDC__
-	double yn(int n, double x)	/* wrapper yn */
+void yn(int n, double x, double* result)	/* wrapper yn */
 #else
-	double yn(n,x)			/* wrapper yn */
-	double x; int n;
+void yn(n, x, result)            /* wrapper yn */
+        double x; int n; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_yn(n,x);
+    __ieee754_yn(n,x,result);
+    return;
 #else
-	double z;
-	z = __ieee754_yn(n,x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-        if(x <= 0.0){
-                if(x==0.0)
-                    /* d= -one/(x-x); */
-                    return __kernel_standard((double)n,x,12);
-                else
-                    /* d = zero/(x-x); */
-                    return __kernel_standard((double)n,x,13);
+    double z;
+    __ieee754_yn(n, x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    if (x <= 0.0) {
+        if (x == 0.0) {
+            /* d= -one/(x-x); */
+            __kernel_standard((double) n, x, 12, result);
+            return;
         }
-	if(x>X_TLOSS) {
-	    return __kernel_standard((double)n,x,39); /* yn(x>X_TLOSS,n) */
-	} else
-	    return z;
+        else {
+            /* d = zero/(x-x); */
+            __kernel_standard((double) n, x, 13, result);
+            return;
+        }
+    }
+    if (x > X_TLOSS) {
+        __kernel_standard((double) n, x, 39, result); /* yn(x>X_TLOSS,n) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

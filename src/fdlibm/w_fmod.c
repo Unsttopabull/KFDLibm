@@ -1,4 +1,3 @@
-
 /* @(#)w_fmod.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -19,21 +18,29 @@
 
 
 #ifdef __STDC__
-	double fmod(double x, double y)	/* wrapper fmod */
+void fmod(double x, double y, double* result)	/* wrapper fmod */
 #else
-	double fmod(x,y)		/* wrapper fmod */
-	double x,y;
+void fmod(x, y, result)        /* wrapper fmod */
+        double x, y; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_fmod(x,y);
+    __ieee754_fmod(x,y, result);
+    return;
 #else
-	double z;
-	z = __ieee754_fmod(x,y);
-	if(_LIB_VERSION == _IEEE_ ||isnan(y)||isnan(x)) return z;
-	if(y==0.0) {
-	        return __kernel_standard(x,y,27); /* fmod(x,0) */
-	} else
-	    return z;
+    double z;
+    __ieee754_fmod(x, y, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(y) || isnan(x)) {
+        *result = z;
+        return;
+    }
+    if (y == 0.0) {
+        __kernel_standard(x, y, 27, result); /* fmod(x,0) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

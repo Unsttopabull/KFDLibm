@@ -1,4 +1,3 @@
-
 /* @(#)w_lgamma_r.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -19,24 +18,38 @@
 
 
 #ifdef __STDC__
-	double lgamma_r(double x, int *signgamp) /* wrapper lgamma_r */
+void lgamma_r(double x, int *signgamp, double* result) /* wrapper lgamma_r */
 #else
-	double lgamma_r(x,signgamp)              /* wrapper lgamma_r */
-        double x; int *signgamp;
+void lgamma_r(x, signgamp, result)              /* wrapper lgamma_r */
+        double x; int* signgamp; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_lgamma_r(x,signgamp);
+    __ieee754_lgamma_r(x,signgamp, result);
+    return;
 #else
-        double y;
-        y = __ieee754_lgamma_r(x,signgamp);
-        if(_LIB_VERSION == _IEEE_) return y;
-        if(!finite(y)&&finite(x)) {
-            if(floor(x)==x&&x<=0.0)
-                return __kernel_standard(x,x,15); /* lgamma pole */
-            else
-                return __kernel_standard(x,x,14); /* lgamma overflow */
-        } else
-            return y;
+    double y;
+    __ieee754_lgamma_r(x, signgamp, &y);
+    if (_LIB_VERSION == _IEEE_) {
+        *result = y;
+        return;
+    }
+    if (!finite(y) && finite(x)) {
+        double floorX;
+        floor(x, &floorX);
+
+        if (floorX == x && x <= 0.0) {
+            __kernel_standard(x, x, 15, result); /* lgamma pole */
+            return;
+        }
+        else {
+            __kernel_standard(x, x, 14, result);
+            return;
+        } /* lgamma overflow */
+    }
+    else {
+        *result = y;
+        return;
+    }
 #endif
 }             

@@ -1,4 +1,3 @@
-
 /* @(#)w_j1.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -18,49 +17,72 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double j1(double x)		/* wrapper j1 */
+void j1(double x, double* result)		/* wrapper j1 */
 #else
-	double j1(x)			/* wrapper j1 */
-	double x;
+void j1(x, result)            /* wrapper j1 */
+        double x;double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_j1(x);
+    __ieee754_j1(x, result);
+    return;
 #else
-	double z;
-	z = __ieee754_j1(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-	if(fabs(x)>X_TLOSS) {
-	        return __kernel_standard(x,x,36); /* j1(|x|>X_TLOSS) */
-	} else
-	    return z;
+    double z;
+    __ieee754_j1(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    double fabsV;
+    fabs(x, &fabsV);
+
+    if (fabsV > X_TLOSS) {
+        __kernel_standard(x, x, 36, result); /* j1(|x|>X_TLOSS) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }
 
 #ifdef __STDC__
-	double y1(double x)		/* wrapper y1 */
+void y1(double x, double* result)		/* wrapper y1 */
 #else
-	double y1(x)			/* wrapper y1 */
-	double x;
+void y1(x,result)            /* wrapper y1 */
+        double x; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_y1(x);
+    __ieee754_y1(x, result);
+    return;
 #else
-	double z;
-	z = __ieee754_y1(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) ) return z;
-        if(x <= 0.0){
-                if(x==0.0)
-                    /* d= -one/(x-x); */
-                    return __kernel_standard(x,x,10);
-                else
-                    /* d = zero/(x-x); */
-                    return __kernel_standard(x,x,11);
+    double z;
+    __ieee754_y1(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    if (x <= 0.0) {
+        if (x == 0.0) {
+            /* d= -one/(x-x); */
+            __kernel_standard(x, x, 10, result);
+            return;
         }
-	if(x>X_TLOSS) {
-	        return __kernel_standard(x,x,37); /* y1(x>X_TLOSS) */
-	} else
-	    return z;
+        else {
+            /* d = zero/(x-x); */
+            __kernel_standard(x, x, 11, result);
+            return;
+        }
+    }
+    if (x > X_TLOSS) {
+        __kernel_standard(x, x, 37, result); /* y1(x>X_TLOSS) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

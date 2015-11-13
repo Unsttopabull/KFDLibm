@@ -156,10 +156,10 @@ static double
 static double zero = 0.00000000000000000000e+00;
 
 #ifdef __STDC__
-static double sin_pi(double x)
+static void sin_pi(double x, double* result)
 #else
-static double sin_pi(x)
-        double x;
+static void sin_pi(x,result)
+        double x; double* result;
 #endif
 {
     double y, z;
@@ -168,7 +168,8 @@ static double sin_pi(x)
     ix = 0x7fffffff & __HI(x);
 
     if (ix < 0x3fd00000) {
-        return __kernel_sin(pi * x, zero, 0);
+        __kernel_sin(pi * x, zero, 0, result);
+        return;
     }
     y = -x;        /* x is assume negative */
 
@@ -176,10 +177,14 @@ static double sin_pi(x)
      * argument reduction, make sure inexact flag not raised if input
      * is an integer
      */
-    z = floor(y);
+    floor(y, &z);
     if (z != y) {                /* inexact anyway */
         y *= 0.5;
-        y = 2.0 * (y - floor(y));        /* y = |x| mod 2.0 */
+
+        double floorV;
+        floor(y, &floorV);
+
+        y = 2.0 * (y - floorV);        /* y = |x| mod 2.0 */
         n = (int) (y * 4.0);
     }
     else {
@@ -198,25 +203,27 @@ static double sin_pi(x)
     }
     switch (n) {
         case 0:
-            y = __kernel_sin(pi * y, zero, 0);
+            __kernel_sin(pi * y, zero, 0, &y);
             break;
         case 1:
         case 2:
-            y = __kernel_cos(pi * (0.5 - y), zero);
+            __kernel_cos(pi * (0.5 - y), zero, &y);
             break;
         case 3:
         case 4:
-            y = __kernel_sin(pi * (one - y), zero, 0);
+            __kernel_sin(pi * (one - y), zero, 0, &y);
             break;
         case 5:
         case 6:
-            y = -__kernel_cos(pi * (y - 1.5), zero);
+            __kernel_cos(pi * (y - 1.5), zero, &y);
+            y = -y;
             break;
         default:
-            y = __kernel_sin(pi * (y - 2.0), zero, 0);
+            __kernel_sin(pi * (y - 2.0), zero, 0, &y);
             break;
     }
-    return -y;
+    *result = -y;
+    return;
 }
 
 
@@ -247,11 +254,15 @@ void __ieee754_lgamma_r(x, signgamp, result)
     if (ix < 0x3b900000) {    /* |x|<2**-70, return -log(|x|) */
         if (hx < 0) {
             *signgamp = -1;
-            *result = -__ieee754_log(-x);
+            __ieee754_log(-x, result);
+
+            *result = -*result;
             return;
         }
         else {
-            *result = -__ieee754_log(x);
+            __ieee754_log(x,result);
+
+            *result = -*result;
             return;
         }
     }
@@ -260,12 +271,16 @@ void __ieee754_lgamma_r(x, signgamp, result)
             *result = one / zero;
             return;
         }
-        t = sin_pi(x);
+        sin_pi(x, &t);
         if (t == zero) {
             *result = one / zero;
             return;
         } /* -integer */
-        nadj = __ieee754_log(pi / fabs(t * x));
+
+        double fabsV;
+        fabs(t * x, &fabsV);
+
+        __ieee754_log(pi / fabsV, &nadj);
         if (t < zero) {
             *signgamp = -1;
         }
@@ -279,7 +294,9 @@ void __ieee754_lgamma_r(x, signgamp, result)
     }
     else if (ix < 0x40000000) {
         if (ix <= 0x3feccccc) {    /* lgamma(x) = lgamma(x+1)-log(x) */
-            r = -__ieee754_log(x);
+            __ieee754_log(x, &r);
+            r = -r;
+
             if (ix >= 0x3FE76944) {
                 y = one - x;
                 i = 0;
@@ -350,13 +367,16 @@ void __ieee754_lgamma_r(x, signgamp, result)
                 z *= (y + 3.0);    /* FALLTHRU */
             case 3:
                 z *= (y + 2.0);    /* FALLTHRU */
-                r += __ieee754_log(z);
+                double logZ;
+                __ieee754_log(z, &logZ);
+
+                r += logZ;
                 break;
         }
         /* 8.0 <= x < 2**58 */
     }
     else if (ix < 0x43900000) {
-        t = __ieee754_log(x);
+        __ieee754_log(x, &t);
         z = one / x;
         y = z * z;
         w = w0 + z * (w1 + y * (w2 + y * (w3 + y * (w4 + y * (w5 + y * w6)))));
@@ -364,7 +384,10 @@ void __ieee754_lgamma_r(x, signgamp, result)
     }
     else {
         /* 2**58 <= x <= inf */
-        r = x * (__ieee754_log(x) - one);
+        double logX;
+        __ieee754_log(x, &logX);
+
+        r = x * (logX - one);
     }
     if (hx < 0) {
         r = nadj - r;

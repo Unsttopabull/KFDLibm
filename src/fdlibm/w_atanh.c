@@ -1,4 +1,3 @@
-
 /* @(#)w_atanh.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -18,25 +17,36 @@
 
 
 #ifdef __STDC__
-	double atanh(double x)		/* wrapper atanh */
+void atanh(double x, double* result)		/* wrapper atanh */
 #else
-	double atanh(x)			/* wrapper atanh */
-	double x;
+void atanh(x, result)            /* wrapper atanh */
+        double x;double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_atanh(x);
+    __ieee754_atanh(x, result);
+    return;
 #else
-	double z,y;
-	z = __ieee754_atanh(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	y = fabs(x);
-	if(y>=1.0) {
-	    if(y>1.0)
-	        return __kernel_standard(x,x,30); /* atanh(|x|>1) */
-	    else 
-	        return __kernel_standard(x,x,31); /* atanh(|x|==1) */
-	} else
-	    return z;
+    double z, y;
+    __ieee754_atanh(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    fabs(x, &y);
+    if (y >= 1.0) {
+        if (y > 1.0) {
+            __kernel_standard(x, x, 30, result); /* atanh(|x|>1) */
+            return;
+        }
+        else {
+            __kernel_standard(x, x, 31, result);
+            return;
+        } /* atanh(|x|==1) */
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

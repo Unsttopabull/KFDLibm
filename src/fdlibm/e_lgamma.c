@@ -23,11 +23,11 @@
 extern int signgam;
 
 #ifdef __STDC__
-	double __ieee754_lgamma(double x)
+	void __ieee754_lgamma(double x, double* result)
 #else
-	double __ieee754_lgamma(x)
-	double x;
+	void __ieee754_lgamma(x,result)
+	double x; double* result;
 #endif
 {
-	return __ieee754_lgamma_r(x,&signgam);
+	return __ieee754_lgamma_r(x,&signgam,result);
 }

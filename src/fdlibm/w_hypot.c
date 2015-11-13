@@ -1,4 +1,3 @@
-
 /* @(#)w_hypot.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -19,21 +18,29 @@
 
 
 #ifdef __STDC__
-	double hypot(double x, double y)/* wrapper hypot */
+void hypot(double x, double y, double* result)/* wrapper hypot */
 #else
-	double hypot(x,y)		/* wrapper hypot */
-	double x,y;
+void hypot(x, y, result)        /* wrapper hypot */
+        double x, y; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_hypot(x,y);
+    __ieee754_hypot(x,y, result);
+    return;
 #else
-	double z;
-	z = __ieee754_hypot(x,y);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if((!finite(z))&&finite(x)&&finite(y))
-	    return __kernel_standard(x,y,4); /* hypot overflow */
-	else
-	    return z;
+    double z;
+    __ieee754_hypot(x, y, &z);
+    if (_LIB_VERSION == _IEEE_) {
+        *result = z;
+        return;
+    }
+    if ((!finite(z)) && finite(x) && finite(y)) {
+        __kernel_standard(x, y, 4, result); /* hypot overflow */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

@@ -1,5 +1,3 @@
-
-
 /* @(#)w_pow.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -20,41 +18,60 @@
 
 
 #ifdef __STDC__
-	double pow(double x, double y)	/* wrapper pow */
+void pow(double x, double y, double* result)	/* wrapper pow */
 #else
-	double pow(x,y)			/* wrapper pow */
-	double x,y;
+void pow(x, y, result)            /* wrapper pow */
+        double x, y; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return  __ieee754_pow(x,y);
+    __ieee754_pow(x,y, result);
+    return;
 #else
-	double z;
-	z=__ieee754_pow(x,y);
-	if(_LIB_VERSION == _IEEE_|| isnan(y)) return z;
-	if(isnan(x)) {
-	    if(y==0.0) 
-	        return __kernel_standard(x,y,42); /* pow(NaN,0.0) */
-	    else 
-		return z;
-	}
-	if(x==0.0){ 
-	    if(y==0.0)
-	        return __kernel_standard(x,y,20); /* pow(0.0,0.0) */
-	    if(finite(y)&&y<0.0)
-	        return __kernel_standard(x,y,23); /* pow(0.0,negative) */
-	    return z;
-	}
-	if(!finite(z)) {
-	    if(finite(x)&&finite(y)) {
-	        if(isnan(z))
-	            return __kernel_standard(x,y,24); /* pow neg**non-int */
-	        else 
-	            return __kernel_standard(x,y,21); /* pow overflow */
-	    }
-	} 
-	if(z==0.0&&finite(x)&&finite(y))
-	    return __kernel_standard(x,y,22); /* pow underflow */
-	return z;
+    __ieee754_pow(x, y, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(y)) {
+        *result = z;
+        return;
+    }
+    if (isnan(x)) {
+        if (y == 0.0) {
+            __kernel_standard(x, y, 42, result); /* pow(NaN,0.0) */
+            return;
+        }
+        else {
+            *result = z;
+            return;
+        }
+    }
+    if (x == 0.0) {
+        if (y == 0.0) {
+            __kernel_standard(x, y, 20, result);
+            return;
+        } /* pow(0.0,0.0) */
+        if (finite(y) && y < 0.0) {
+            __kernel_standard(x, y, 23, result);
+            return;
+        } /* pow(0.0,negative) */
+        *result = z;
+        return;
+    }
+    if (!finite(z)) {
+        if (finite(x) && finite(y)) {
+            if (isnan(z)) {
+                __kernel_standard(x, y, 24, result); /* pow neg**non-int */
+                return;
+            }
+            else {
+                __kernel_standard(x, y, 21, result);
+                return;
+            } /* pow overflow */
+        }
+    }
+    if (z == 0.0 && finite(x) && finite(y)) {
+        __kernel_standard(x, y, 22, result);
+        return;
+    } /* pow underflow */
+    *result = z;
+    return;
 #endif
 }

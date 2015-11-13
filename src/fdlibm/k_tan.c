@@ -72,7 +72,7 @@ static const double xxx[] = {
 /* INDENT ON */
 
 void
-__kernel_tan(double x, double y, int iy, double *result) {
+__kernel_tan(double x, double y, int iy, double* result) {
     double z, r, v, w, s;
     int ix, hx;
 

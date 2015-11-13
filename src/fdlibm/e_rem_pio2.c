@@ -121,7 +121,7 @@ pio2_3t =  8.47842766036889956997e-32; /* 0x397B839A, 0x252049C1 */
 	    }
 	}
 	if(ix<=0x413921fb) { /* |x| ~<= 2^19*(pi/2), medium size */
-	    t  = fabs(x);
+	    fabs(x, &t);
 	    n  = (int) (t*invpio2+half);
 	    fn = (double)n;
 	    r  = t-fn*pio2_1;

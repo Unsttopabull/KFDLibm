@@ -97,9 +97,9 @@ static double
 static double zero = 0.0;
 
 #ifdef __STDC__
-    void log1p(double x, double* result)
+void log1p(double x, double* result)
 #else
-    void log1p(x,result)
+void log1p(x, result)
         double x; double* result;
 #endif
 {
@@ -123,8 +123,8 @@ static double zero = 0.0;
         if (ax < 0x3e200000) {            /* |x| < 2**-29 */
             if (two54 + x > zero            /* raise inexact */
                 && ax < 0x3c900000) {        /* |x| < 2**-54 */
-                    *result = x;
-                }
+                *result = x;
+            }
             else {
                 *result = x - x * x * 0.5;
                 return;
@@ -185,7 +185,7 @@ static double zero = 0.0;
         }
         else {
             *result = k * ln2_hi - ((R - (k * ln2_lo + c)) - f);
-            return;*result =
+            return;
         }
     }
     s = f / (2.0 + f);

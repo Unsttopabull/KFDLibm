@@ -1,4 +1,3 @@
-
 /* @(#)w_scalb.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -23,34 +22,42 @@
 
 #ifdef __STDC__
 #ifdef _SCALB_INT
-	double scalb(double x, int fn)		/* wrapper scalb */
+void scalb(double x, int fn, double* result)		/* wrapper scalb */
 #else
-	double scalb(double x, double fn)	/* wrapper scalb */
+void scalb(double x, double fn, double* result)	/* wrapper scalb */
 #endif
 #else
-	double scalb(x,fn)			/* wrapper scalb */
+void scalb(x, fn, result)            /* wrapper scalb */
 #ifdef _SCALB_INT
-	double x; int fn;
+double x; int fn; double* result;
 #else
-	double x,fn;
+        double x, fn; double* result;
 #endif
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_scalb(x,fn);
+    __ieee754_scalb(x,fn, result);
+    return;
 #else
-	double z;
-	z = __ieee754_scalb(x,fn);
-	if(_LIB_VERSION == _IEEE_) return z;
-	if(!(finite(z)||isnan(z))&&finite(x)) {
-	    return __kernel_standard(x,(double)fn,32); /* scalb overflow */
-	}
-	if(z==0.0&&z!=x) {
-	    return __kernel_standard(x,(double)fn,33); /* scalb underflow */
-	} 
+    double z;
+    __ieee754_scalb(x, fn, &z);
+    if (_LIB_VERSION == _IEEE_) {
+        *result = z;
+        return;
+    }
+    if (!(finite(z) || isnan(z)) && finite(x)) {
+        __kernel_standard(x, (double) fn, 32, result); /* scalb overflow */
+        return;
+    }
+    if (z == 0.0 && z != x) {
+        __kernel_standard(x, (double) fn, 33, result); /* scalb underflow */
+        return;
+    }
 #ifndef _SCALB_INT
-	if(!finite(fn)) errno = ERANGE;
+    if (!finite(fn)) {
+        errno = ERANGE;
+    }
 #endif
-	return z;
-#endif 
+    *result = z;
+#endif
 }

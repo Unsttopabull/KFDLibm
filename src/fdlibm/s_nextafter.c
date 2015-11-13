@@ -1,4 +1,3 @@
-
 /* @(#)s_nextafter.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -21,58 +20,88 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double nextafter(double x, double y)
+void nextafter(double x, double y, double* result)
 #else
-	double nextafter(x,y)
-	double x,y;
+void nextafter(x, y, result)
+        double x, y; double* result;
 #endif
 {
-	int	hx,hy,ix,iy;
-	unsigned lx,ly;
+    int hx, hy, ix, iy;
+    unsigned lx, ly;
 
-	hx = __HI(x);		/* high word of x */
-	lx = __LO(x);		/* low  word of x */
-	hy = __HI(y);		/* high word of y */
-	ly = __LO(y);		/* low  word of y */
-	ix = hx&0x7fffffff;		/* |x| */
-	iy = hy&0x7fffffff;		/* |y| */
+    hx = __HI(x);        /* high word of x */
+    lx = __LO(x);        /* low  word of x */
+    hy = __HI(y);        /* high word of y */
+    ly = __LO(y);        /* low  word of y */
+    ix = hx & 0x7fffffff;        /* |x| */
+    iy = hy & 0x7fffffff;        /* |y| */
 
-	if(((ix>=0x7ff00000)&&((ix-0x7ff00000)|lx)!=0) ||   /* x is nan */ 
-	   ((iy>=0x7ff00000)&&((iy-0x7ff00000)|ly)!=0))     /* y is nan */ 
-	   return x+y;				
-	if(x==y) return x;		/* x=y, return x */
-	if((ix|lx)==0) {			/* x == 0 */
-	    __HI(x) = hy&0x80000000;	/* return +-minsubnormal */
-	    __LO(x) = 1;
-	    y = x*x;
-	    if(y==x) return y; else return x;	/* raise underflow flag */
-	} 
-	if(hx>=0) {				/* x > 0 */
-	    if(hx>hy||((hx==hy)&&(lx>ly))) {	/* x > y, x -= ulp */
-		if(lx==0) hx -= 1;
-		lx -= 1;
-	    } else {				/* x < y, x += ulp */
-		lx += 1;
-		if(lx==0) hx += 1;
-	    }
-	} else {				/* x < 0 */
-	    if(hy>=0||hx>hy||((hx==hy)&&(lx>ly))){/* x < y, x -= ulp */
-		if(lx==0) hx -= 1;
-		lx -= 1;
-	    } else {				/* x > y, x += ulp */
-		lx += 1;
-		if(lx==0) hx += 1;
-	    }
-	}
-	hy = hx&0x7ff00000;
-	if(hy>=0x7ff00000) return x+x;	/* overflow  */
-	if(hy<0x00100000) {		/* underflow */
-	    y = x*x;
-	    if(y!=x) {		/* raise underflow flag */
-		__HI(y) = hx; __LO(y) = lx;
-		return y;
-	    }
-	}
-	__HI(x) = hx; __LO(x) = lx;
-	return x;
+    if (((ix >= 0x7ff00000) && ((ix - 0x7ff00000) | lx) != 0) ||   /* x is nan */
+        ((iy >= 0x7ff00000) && ((iy - 0x7ff00000) | ly) != 0)) {     /* y is nan */
+        *result = x + y;
+        return;
+    }
+    if (x == y) {
+        *result = x;
+        return;
+    }        /* x=y, return x */
+    if ((ix | lx) == 0) {            /* x == 0 */
+        __HI(x) = hy & 0x80000000;    /* return +-minsubnormal */
+        __LO(x) = 1;
+        y = x * x;
+        if (y == x) {
+            *result = y;
+            return;
+        }
+        else {
+            *result = x;
+            return;
+        }    /* raise underflow flag */
+    }
+    if (hx >= 0) {                /* x > 0 */
+        if (hx > hy || ((hx == hy) && (lx > ly))) {    /* x > y, x -= ulp */
+            if (lx == 0) {
+                hx -= 1;
+            }
+            lx -= 1;
+        }
+        else {                /* x < y, x += ulp */
+            lx += 1;
+            if (lx == 0) {
+                hx += 1;
+            }
+        }
+    }
+    else {                /* x < 0 */
+        if (hy >= 0 || hx > hy || ((hx == hy) && (lx > ly))) {/* x < y, x -= ulp */
+            if (lx == 0) {
+                hx -= 1;
+            }
+            lx -= 1;
+        }
+        else {                /* x > y, x += ulp */
+            lx += 1;
+            if (lx == 0) {
+                hx += 1;
+            }
+        }
+    }
+    hy = hx & 0x7ff00000;
+    if (hy >= 0x7ff00000) {
+        *result = x + x;
+        return;
+    }    /* overflow  */
+    if (hy < 0x00100000) {        /* underflow */
+        y = x * x;
+        if (y != x) {        /* raise underflow flag */
+            __HI(y) = hx;
+            __LO(y) = lx;
+            *result = y;
+            return;
+        }
+    }
+    __HI(x) = hx;
+    __LO(x) = lx;
+    *result = x;
+    return;
 }

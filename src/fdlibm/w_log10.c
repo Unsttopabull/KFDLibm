@@ -1,4 +1,3 @@
-
 /* @(#)w_log10.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -19,24 +18,35 @@
 
 
 #ifdef __STDC__
-	double log10(double x)		/* wrapper log10 */
+void log10(double x, double* result)		/* wrapper log10 */
 #else
-	double log10(x)			/* wrapper log10 */
-	double x;
+void log10(x, result)            /* wrapper log10 */
+        double x; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_log10(x);
+    __ieee754_log10(x,result);
+    return;
 #else
-	double z;
-	z = __ieee754_log10(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(x<=0.0) {
-	    if(x==0.0)
-	        return __kernel_standard(x,x,18); /* log10(0) */
-	    else 
-	        return __kernel_standard(x,x,19); /* log10(x<0) */
-	} else
-	    return z;
+    double z;
+    __ieee754_log10(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    if (x <= 0.0) {
+        if (x == 0.0) {
+            __kernel_standard(x, x, 18, result); /* log10(0) */
+            return;
+        }
+        else {
+            __kernel_standard(x, x, 19, result);
+            return;
+        } /* log10(x<0) */
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

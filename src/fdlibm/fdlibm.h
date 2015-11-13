@@ -92,58 +92,58 @@ struct exception {
 /*
  * ANSI/POSIX
  */
-extern double acos __P((double));
-extern double asin __P((double));
+extern void acos __P((double, double*));
+extern void asin __P((double, double*));
 extern void atan __P((double,double*));
-extern double atan2 __P((double, double));
+extern void atan2 __P((double, double, double*));
 extern void cos __P((double, double*));
 extern void sin __P((double, double*));
-extern double tan __P((double));
+extern void tan __P((double, double*));
 
-extern double cosh __P((double));
-extern double sinh __P((double));
-extern double tanh __P((double));
+extern void cosh __P((double, double*));
+extern void sinh __P((double, double*));
+extern void tanh __P((double, double*));
 
-extern double exp __P((double));
-extern double frexp __P((double, int *));
-extern double ldexp __P((double, int));
-extern double log __P((double));
-extern double log10 __P((double));
-extern double modf __P((double, double *));
+extern void exp __P((double,double*));
+extern void frexp __P((double, int*, double*));
+extern void ldexp __P((double, int, double*));
+extern void log __P((double, double*));
+extern void log10 __P((double, double*));
+extern void modf __P((double, double*, double*));
 
-extern double pow __P((double, double));
+extern void pow __P((double, double, double*));
 extern void sqrt __P((double,double*));
 
-extern double ceil __P((double));
+extern void ceil __P((double, double*));
 extern void fabs __P((double,double*));
 extern void floor __P((double,double*));
-extern double fmod __P((double, double));
+extern void fmod __P((double, double, double*));
 
-extern double erf __P((double));
-extern double erfc __P((double));
-extern double gamma __P((double));
-extern double hypot __P((double, double));
+extern void erf __P((double, double*));
+extern void erfc __P((double, double*));
+extern void gamma __P((double, double*));
+extern void hypot __P((double, double, double*));
 extern int isnan __P((double));
 extern int finite __P((double));
-extern double j0 __P((double));
-extern double j1 __P((double));
-extern double jn __P((int, double));
-extern double lgamma __P((double));
-extern double y0 __P((double));
-extern double y1 __P((double));
-extern double yn __P((int, double));
+extern void j0 __P((double, double*));
+extern void j1 __P((double, double*));
+extern void jn __P((int, double, double*));
+extern void lgamma __P((double, double*));
+extern void y0 __P((double, double*));
+extern void y1 __P((double, double*));
+extern void yn __P((int, double, double*));
 
-extern double acosh __P((double));
-extern double asinh __P((double));
-extern double atanh __P((double));
-extern double cbrt __P((double));
-extern double logb __P((double));
-extern double nextafter __P((double, double));
-extern double remainder __P((double, double));
+extern void acosh __P((double, double*));
+extern void asinh __P((double, double*));
+extern void atanh __P((double, double*));
+extern void cbrt __P((double, double*));
+extern void logb __P((double, double*));
+extern void nextafter __P((double, double, double*));
+extern void remainder __P((double, double, double*));
 #ifdef _SCALB_INT
-extern double scalb __P((double, int));
+extern void scalb __P((double, int, double*));
 #else
-extern double scalb __P((double, double));
+extern void scalb __P((double, double, double*));
 #endif
 
 extern int matherr __P((struct exception *));
@@ -151,7 +151,7 @@ extern int matherr __P((struct exception *));
 /*
  * IEEE Test Vector
  */
-extern double significand __P((double));
+extern void significand __P((double,double*));
 
 /*
  * Functions callable from C, intended to support IEEE arithmetic.
@@ -177,7 +177,7 @@ extern double lgamma_r __P((double, int *));
 #endif	/* _REENTRANT */
 
 /* ieee style elementary functions */
-extern double __ieee754_sqrt __P((double));
+extern void __ieee754_sqrt __P((double, double*));
 extern void __ieee754_acos __P((double, double*));
 extern void __ieee754_acosh __P((double,double*));
 extern void __ieee754_log __P((double,double*));
@@ -187,31 +187,33 @@ extern void __ieee754_atan2 __P((double,double,double*));
 extern void __ieee754_exp __P((double, double*));
 extern void __ieee754_cosh __P((double,double*));
 extern void __ieee754_fmod __P((double,double, double*));
-extern double __ieee754_pow __P((double,double));
+extern void __ieee754_pow __P((double,double,double*));
 extern void __ieee754_lgamma_r __P((double,int *, double*));
 extern void __ieee754_gamma_r __P((double,int *, double*));
-extern double __ieee754_lgamma __P((double));
+extern void __ieee754_lgamma __P((double, double*));
 extern void __ieee754_gamma __P((double, double*));
-extern double __ieee754_log10 __P((double));
-extern double __ieee754_sinh __P((double));
+extern void __ieee754_log10 __P((double, double*));
+extern void __ieee754_sinh __P((double, double*));
 extern void __ieee754_hypot __P((double,double,double*));
 extern void __ieee754_j0 __P((double,double*));
 extern void __ieee754_j1 __P((double, double*));
 extern void __ieee754_y0 __P((double,double*));
 extern void __ieee754_y1 __P((double, double*));
-extern double __ieee754_jn __P((int,double));
-extern double __ieee754_yn __P((int,double));
-extern double __ieee754_remainder __P((double,double));
+extern void __ieee754_jn __P((int,double,double*));
+extern void __ieee754_yn __P((int,double,double*));
+extern void __ieee754_remainder __P((double,double, double*));
 extern int    __ieee754_rem_pio2 __P((double,double*));
 #ifdef _SCALB_INT
-extern double __ieee754_scalb __P((double,int));
+extern void __ieee754_scalb __P((double,int,double*));
 #else
-extern double __ieee754_scalb __P((double,double));
+extern void __ieee754_scalb __P((double,double,double*));
 #endif
 
+//#pragma GCC visibility push(hidden)
 /* fdlibm kernel function */
 extern void __kernel_standard __P((double,double,int,double*));
 extern void __kernel_sin __P((double,double,int,double*));
 extern void __kernel_cos __P((double,double,double*));
 extern void __kernel_tan __P((double,double,int,double*));
 extern int    __kernel_rem_pio2 __P((double*,double*,int,int,int,const int*));
+//#pragma GCC visibility pop

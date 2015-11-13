@@ -1,4 +1,3 @@
-
 /* @(#)w_sqrt.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -18,21 +17,29 @@
 #include "fdlibm.h"
 
 #ifdef __STDC__
-	double sqrt(double x)		/* wrapper sqrt */
+void sqrt(double x, double* result)		/* wrapper sqrt */
 #else
-	double sqrt(x)			/* wrapper sqrt */
-	double x;
+void sqrt(x,result)            /* wrapper sqrt */
+        double x; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_sqrt(x);
+    __ieee754_sqrt(x, result);
+    return;
 #else
-	double z;
-	z = __ieee754_sqrt(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x)) return z;
-	if(x<0.0) {
-	    return __kernel_standard(x,x,26); /* sqrt(negative) */
-	} else
-	    return z;
+    double z;
+    __ieee754_sqrt(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x)) {
+        *result = z;
+        return;
+    }
+    if (x < 0.0) {
+        __kernel_standard(x, x, 26, result); /* sqrt(negative) */
+        return;
+    }
+    else {
+        *result = z;
+        return;
+    }
 #endif
 }

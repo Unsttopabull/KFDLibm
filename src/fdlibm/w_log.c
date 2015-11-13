@@ -1,4 +1,3 @@
-
 /* @(#)w_log.c 1.3 95/01/18 */
 /*
  * ====================================================
@@ -19,21 +18,29 @@
 
 
 #ifdef __STDC__
-	double log(double x)		/* wrapper log */
+void log(double x, double* result)		/* wrapper log */
 #else
-	double log(x)			/* wrapper log */
-	double x;
+void log(x, result)            /* wrapper log */
+        double x; double* result;
 #endif
 {
 #ifdef _IEEE_LIBM
-	return __ieee754_log(x);
+    __ieee754_log(x, result);
+    return;
 #else
-	double z;
-	z = __ieee754_log(x);
-	if(_LIB_VERSION == _IEEE_ || isnan(x) || x > 0.0) return z;
-	if(x==0.0)
-	    return __kernel_standard(x,x,16); /* log(0) */
-	else 
-	    return __kernel_standard(x,x,17); /* log(x<0) */
+    double z;
+    __ieee754_log(x, &z);
+    if (_LIB_VERSION == _IEEE_ || isnan(x) || x > 0.0) {
+        *result = z;
+        return;
+    }
+    if (x == 0.0) {
+        __kernel_standard(x, x, 16, result); /* log(0) */
+        return;
+    }
+    else {
+        __kernel_standard(x, x, 17, result);
+        return;
+    } /* log(x<0) */
 #endif
 }

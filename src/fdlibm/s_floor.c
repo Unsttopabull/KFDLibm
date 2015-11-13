@@ -101,4 +101,5 @@ void floor(x, result)
     __HI(x) = i0;
     __LO(x) = i1;
     *result = x;
+    return;
 }

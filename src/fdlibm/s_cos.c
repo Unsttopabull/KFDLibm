@@ -59,7 +59,7 @@ void cos(x, result)
     /* |x| ~< pi/4 */
     ix &= 0x7fffffff;
     if (ix <= 0x3fe921fb) {
-        *result = __kernel_cos(x, z);
+        __kernel_cos(x, z, result);
         return;
 
         /* cos(Inf or NaN) is NaN */
@@ -85,7 +85,7 @@ void cos(x, result)
                 *result = -*result;
                 return;
             default:
-                __kernel_sin(y[0], y[1], 1, &result);
+                __kernel_sin(y[0], y[1], 1, result);
                 return;
         }
     }
