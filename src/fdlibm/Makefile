@@ -50,7 +50,7 @@
 # Default IEEE libm
 #
 #CFLAGS = -D_IEEE_LIBM 
-CFLAGS = -D_IEEE_LIBM -mno-sse -ffreestanding
+CFLAGS = -D_IEEE_LIBM -mno-sse -ffreestanding -mcmodel=kernel
 #-fno-builtin
 
 CC = cc

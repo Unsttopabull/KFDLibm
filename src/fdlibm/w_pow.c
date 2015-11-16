@@ -28,6 +28,7 @@ void pow(x, y, result)            /* wrapper pow */
     __ieee754_pow(x,y, result);
     return;
 #else
+	double z;
     __ieee754_pow(x, y, &z);
     if (_LIB_VERSION == _IEEE_ || isnan(y)) {
         *result = z;

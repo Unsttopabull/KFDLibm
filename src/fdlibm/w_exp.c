@@ -37,7 +37,8 @@ void exp(x,result)            /* wrapper exp */
     double z;
     __ieee754_exp(x, &z);
     if (_LIB_VERSION == _IEEE_) {
-        return z;
+        *result = z;
+        return;
     }
     if (finite(x)) {
         if (x > o_threshold) {
